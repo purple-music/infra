@@ -1,0 +1,49 @@
+services:
+  frontend:
+    image: ghcr.io/purple-music/frontend:latest
+    restart: always
+    ports:
+      - "8321:3000"
+    env_file:
+      - .frontend.env
+    networks:
+      - purple-net
+
+  backend:
+    image: ghcr.io/purple-music/backend:latest
+    restart: always
+    env_file:
+      - .backend.env
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - purple-net
+
+  db:
+    env_file:
+      - .db.env
+    image: postgres:latest
+    networks:
+      - purple-net
+    ports:
+      - mode: ingress
+        target: 5432
+        published: "5432"
+        protocol: tcp
+    restart: always
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+networks:
+  purple-net:
+    driver: bridge
+
+volumes:
+  pgdata:

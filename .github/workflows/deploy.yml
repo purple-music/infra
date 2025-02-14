@@ -1,0 +1,43 @@
+name: Deploy to Production
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      COMPOSE_FILE: docker-compose.prod.yml
+
+    steps:
+      - name: Checkout infra repo
+        uses: actions/checkout@v4
+
+      - name: Copy compose file to server
+        uses: appleboy/scp-action@v0.1.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          source: "docker-compose.prod.yml"
+          target: ${{ secrets.SSH_TARGET }}
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            cd $SSH_TARGET
+            echo ${{ secrets.FRONTEND_ENV }} > .frontend.env
+            echo ${{ secrets.BACKEND_ENV }} > .backend.env
+            echo ${{ secrets.DB_ENV }} > .db.env
+            docker compose -f ${{ secrets.SSH_TARGET }}/docker-compose.prod.yml -p purple pull
+            docker compose -f ${{ secrets.SSH_TARGET }}/docker-compose.prod.yml -p purple down
+            docker compose -f ${{ secrets.SSH_TARGET }}/docker-compose.prod.yml -p purple up -d
