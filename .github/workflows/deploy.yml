@@ -35,9 +35,9 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
             cd ${{ vars.SSH_TARGET }}
-            echo ${{ secrets.FRONTEND_ENV }} > .frontend.env
-            echo ${{ secrets.BACKEND_ENV }} > .backend.env
-            echo ${{ secrets.DB_ENV }} > .db.env
+            echo "${{ secrets.FRONTEND_ENV }}" > .frontend.env
+            echo "${{ secrets.BACKEND_ENV }}" > .backend.env
+            echo "${{ secrets.DB_ENV }}" > .db.env
             docker compose -f ${{ vars.SSH_TARGET }}/docker-compose.prod.yml -p purple pull
             docker compose -f ${{ vars.SSH_TARGET }}/docker-compose.prod.yml -p purple down
             docker compose -f ${{ vars.SSH_TARGET }}/docker-compose.prod.yml -p purple up -d

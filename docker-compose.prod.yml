@@ -41,8 +41,8 @@ services:
       test: ["CMD-SHELL", "pg_isready -U music -d purple"]
       interval: 5s
       timeout: 5s
-      retries: 5
-      start_period: 5s
+      retries: 10
+      start_period: 10s
 
 networks:
   purple-net:
