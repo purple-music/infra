@@ -10,7 +10,7 @@ services:
       - purple-net
     depends_on:
       backend:
-        condition: service_healthy
+        condition: service_started
 
   backend:
     image: ghcr.io/purple-music/backend:latest
@@ -38,7 +38,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U music -d purple"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 10
