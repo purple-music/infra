@@ -24,7 +24,7 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           password: ${{ secrets.SSH_PASSWORD }}
           source: "docker-compose.prod.yml"
-          target: ${{ secrets.SSH_TARGET }}
+          target: ${{ vars.SSH_TARGET }}
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v0.1.4
@@ -34,10 +34,10 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            cd $SSH_TARGET
+            cd ${{ vars.SSH_TARGET }}
             echo ${{ secrets.FRONTEND_ENV }} > .frontend.env
             echo ${{ secrets.BACKEND_ENV }} > .backend.env
             echo ${{ secrets.DB_ENV }} > .db.env
-            docker compose -f ${{ secrets.SSH_TARGET }}/docker-compose.prod.yml -p purple pull
-            docker compose -f ${{ secrets.SSH_TARGET }}/docker-compose.prod.yml -p purple down
-            docker compose -f ${{ secrets.SSH_TARGET }}/docker-compose.prod.yml -p purple up -d
+            docker compose -f ${{ vars.SSH_TARGET }}/docker-compose.prod.yml -p purple pull
+            docker compose -f ${{ vars.SSH_TARGET }}/docker-compose.prod.yml -p purple down
+            docker compose -f ${{ vars.SSH_TARGET }}/docker-compose.prod.yml -p purple up -d
