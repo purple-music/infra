@@ -1,4 +1,15 @@
 services:
+  telegram-bot:
+    image: ghcr.io/purple-music/telegram-bot:latest
+    restart: always
+    env_file:
+      - .telegram-bot.env
+    networks:
+      - purple-net
+    depends_on:
+      backend:
+        condition: service_started
+
   frontend:
     image: ghcr.io/purple-music/frontend:latest
     restart: always

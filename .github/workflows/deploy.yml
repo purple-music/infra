@@ -38,6 +38,7 @@ jobs:
             echo "${{ secrets.FRONTEND_ENV }}" > .frontend.env
             echo "${{ secrets.BACKEND_ENV }}" > .backend.env
             echo "${{ secrets.DB_ENV }}" > .db.env
+            echo "${{ secrets.TELEGRAM_BOT_ENV }}" > .telegram-bot.env
             docker compose -f ${{ vars.SSH_TARGET }}/docker-compose.prod.yml -p purple pull
             docker compose -f ${{ vars.SSH_TARGET }}/docker-compose.prod.yml -p purple down
             docker compose -f ${{ vars.SSH_TARGET }}/docker-compose.prod.yml -p purple up -d
